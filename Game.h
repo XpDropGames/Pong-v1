@@ -3,6 +3,11 @@
 #include "Paddle.h"
 #include "Ball.h"
 
+enum Gamestates {
+	Pending,
+	Playing
+};
+
 class Game
 {
 public:
@@ -10,11 +15,14 @@ public:
 	void GameLoop();
 	void Shutdown();
 
+	void SetGamestatePending();
+
 private:
 	void HandleEvents();
 	void Update();
 	void Draw();
 
+	int gamestate = Gamestates::Pending;
 	bool isRunning = true;
 
 	SDL_Window* window = nullptr;

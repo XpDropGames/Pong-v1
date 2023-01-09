@@ -1,6 +1,7 @@
 #include "Ball.h"
 
-Ball::Ball() {
+Ball::Ball(Game* g) {
+	game = g;
 	speed = INITIAL_SPEED;
 
 	pos.x = SCREEN_WIDTH/ 2 - size / 2;
@@ -147,4 +148,6 @@ void Ball::Reset() {
 
 	rect.x = (int)pos.x;
 	rect.y = (int)pos.y;
+
+	game->SetGamestatePending();
 }

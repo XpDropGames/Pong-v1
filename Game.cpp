@@ -27,11 +27,15 @@ bool Game::Init() {
 	rightPaddle = new Paddle(1);
 
 	// Initialize ball
-	ball = new Ball;
+	ball = new Ball(this);
 
 	font = TTF_OpenFont("Assets/font.ttf", 32);
 
 	return true;
+}
+
+void Game::SetGamestatePending() {
+	gamestate = Gamestates::Pending;
 }
 
 void Game::GameLoop() {
@@ -57,6 +61,13 @@ void Game::HandleEvents() {
 		isRunning = false;
 	}
 
+	if (gamestate == Gamestates::Pending) {
+		if (keystates[SDL_SCANCODE_SPACE]) {
+			gamestate = Gamestates::Playing;
+		}
+		return;
+	}
+
 	// Left Paddle movement
 	leftPaddle->SetDir(0);
 	if (keystates[SDL_SCANCODE_E]) {
@@ -77,6 +88,10 @@ void Game::HandleEvents() {
 }
 
 void Game::Update() {
+	if (gamestate == Gamestates::Pending) {
+		return;
+	}
+
 	leftPaddle->Update();
 	rightPaddle->Update();
 
