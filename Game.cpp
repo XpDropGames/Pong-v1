@@ -51,10 +51,10 @@ void Game::HandleEvents() {
 
 	// Left Paddle movement
 	leftPaddle->SetDir(0);
-	if (keystates[SDL_SCANCODE_W]) {
+	if (keystates[SDL_SCANCODE_E]) {
 		leftPaddle->SetDir(-1);
 	}
-	if (keystates[SDL_SCANCODE_S]) {
+	if (keystates[SDL_SCANCODE_D]) {
 		leftPaddle->SetDir(1);
 	}
 

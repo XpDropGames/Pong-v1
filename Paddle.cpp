@@ -2,7 +2,7 @@
 
 Paddle::Paddle(int i) {
 	id = i;
-	speed = 20.f;
+	speed = 12.f;
 
 	if (id == 0) {
 		pos.x = 0;

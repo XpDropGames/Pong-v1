@@ -1,7 +1,7 @@
 #include "Ball.h"
 
 Ball::Ball() {
-	speed = 8.f;
+	speed = INITIAL_SPEED;
 
 	pos.x = SCREEN_WIDTH/ 2 - size / 2;
 	pos.y = SCREEN_HEIGHT / 2 - size / 2;
@@ -36,15 +36,61 @@ void Ball::Update(Paddle* lPaddle, Paddle* rPaddle) {
 	rect.y = (int)pos.y;
 }
 
-void Ball::SetVel(float x, float y) {
+bool Ball::BottomCollision(Paddle* paddle) {
+	bool passedBoundry = false;
+	bool collided = false;
 
+	if (paddle->GetId() == 0) {
+		passedBoundry = pos.x < size;
+	}
+	else if (paddle->GetId() == 1) {
+		passedBoundry = pos.x > SCREEN_WIDTH - size;
+	}
+
+	if (passedBoundry &&												// Passed outer boundry of paddle
+		pos.y <= paddle->GetRect()->y + paddle->GetRect()->h &&			// Top of ball is inside bottom of paddle
+		pos.y + size > paddle->GetRect()->y + paddle->GetRect()->h &&	// Bottom of ball is not inside bottom of paddle
+		vel.y < 0) {													// Ball is moving up
+		pos.y = paddle->GetRect()->y + paddle->GetRect()->h + 1;		// Give a buffer of 1px so doesn't intersect immediately
+		vel.y *= -1;
+		rect.y = pos.y;
+
+		collided = true;
+	}
+
+	return collided;
 }
 
-void Ball::InvertXVel() {
-	
+bool Ball::TopCollision(Paddle* paddle) {
+	bool passedBoundry = false;
+	bool collided = false;
+
+	if (paddle->GetId() == 0) {
+		passedBoundry = pos.x < size;
+	}
+	else if (paddle->GetId() == 1) {
+		passedBoundry = pos.x > SCREEN_WIDTH - size;
+	}
+
+	if (passedBoundry &&												// Passed outer boundry of paddle
+		pos.y + size >= paddle->GetRect()->y &&							// Bottom of ball is inside top of paddle
+		pos.y < paddle->GetRect()->y &&									// Top of ball is not inside top of paddle
+		vel.y > 0) {													// Ball is moving down
+		pos.y = paddle->GetRect()->y - size - 1;						// Give a buffer of 1px so doesn't intersect immediately
+		vel.y *= -1;
+		rect.y = pos.y;
+
+		collided = true;
+	}
+
+	return collided;
 }
 
 void Ball::HandleCollision(Paddle* paddle) {
+	if (BottomCollision(paddle) || TopCollision(paddle)) {
+		return;
+	}
+
 	if (pos.x + size >= paddle->GetPos().x && // Right ball intersect left paddle
 		pos.x <= paddle->GetPos().x + paddle->GetRect()->w && // Left ball intersect right paddle
 		pos.y + size >= paddle->GetPos().y && // Bottom ball intersect top paddle
@@ -52,11 +98,22 @@ void Ball::HandleCollision(Paddle* paddle) {
 		) {
 		vel.x *= -1;
 
+		// Bounce ball differently depending on where it hits the paddle
+		int middlePaddleY = paddle->GetPos().y + paddle->GetRect()->h / 2;
+		int middleBallY = pos.y + size / 2;
+		int offsetY = middlePaddleY - middleBallY;
+
+		vel.y -= offsetY * 1.5 / 100.f;
+
 		if (paddle->GetId() == 0) {
 			pos.x = paddle->GetPos().x + paddle->GetRect()->w;
 		}
 		else if (paddle->GetId() == 1) {
 			pos.x = paddle->GetPos().x - size;
+		}
+
+		if (speed < MAX_SPEED) {
+			speed++;
 		}
 	}
 }
