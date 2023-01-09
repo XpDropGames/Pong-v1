@@ -13,11 +13,17 @@ Ball::Ball() {
 	rect.y = (int)pos.y;
 	rect.w = size;
 	rect.h = size;
+
+	sound = Mix_LoadWAV("Assets/synth.wav");
 }
 
 void Ball::Update(Paddle* lPaddle, Paddle* rPaddle) {
 	pos.x = pos.x + vel.x * speed;
 	pos.y = pos.y + vel.y * speed;
+
+	if (pos.x < 0 || pos.x > SCREEN_WIDTH - size) {
+		Reset();
+	}
 
 	HandleCollision(lPaddle);
 	HandleCollision(rPaddle);
@@ -88,6 +94,7 @@ bool Ball::TopCollision(Paddle* paddle) {
 
 void Ball::HandleCollision(Paddle* paddle) {
 	if (BottomCollision(paddle) || TopCollision(paddle)) {
+		Mix_PlayChannel(-1, sound, 0);
 		return;
 	}
 
@@ -112,6 +119,8 @@ void Ball::HandleCollision(Paddle* paddle) {
 			pos.x = paddle->GetPos().x - size;
 		}
 
+		Mix_PlayChannel(-1, sound, 0);
+
 		if (speed < MAX_SPEED) {
 			speed++;
 		}
@@ -120,4 +129,18 @@ void Ball::HandleCollision(Paddle* paddle) {
 
 SDL_Rect* Ball::GetRect() {
 	return &rect;
+}
+
+void Ball::Shutdown() {
+	Mix_FreeChunk(sound);
+}
+
+void Ball::Reset() {
+	speed = INITIAL_SPEED;
+
+	pos.x = SCREEN_WIDTH / 2 - size / 2;
+	pos.y = SCREEN_HEIGHT / 2 - size / 2;
+
+	rect.x = (int)pos.x;
+	rect.y = (int)pos.y;
 }

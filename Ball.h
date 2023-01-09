@@ -1,5 +1,5 @@
 #pragma once
-
+#include <SDL_mixer.h>
 #include "Paddle.h"
 
 class Ball
@@ -10,6 +10,8 @@ public:
 	void HandleCollision(Paddle* paddle);
 	bool TopCollision(Paddle* paddle);
 	bool BottomCollision(Paddle* paddle);
+	void Shutdown();
+	void Reset();
 
 	SDL_Rect* GetRect();
 
@@ -23,5 +25,7 @@ private:
 	Vec2 pos;
 	Vec2 vel;
 	SDL_Rect rect;
+
+	Mix_Chunk* sound = nullptr;
 };
 

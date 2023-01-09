@@ -2,7 +2,7 @@
 
 bool Game::Init() {
 
-	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
 		return false;
 	}
 
@@ -15,6 +15,8 @@ bool Game::Init() {
 	if (!renderer) {
 		return false;
 	}
+
+	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 
 	// Initialization of paddles
 	leftPaddle = new Paddle(0);
@@ -92,7 +94,9 @@ void Game::Draw() {
 }
 
 void Game::Shutdown() {
+	ball->Shutdown();
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
+	Mix_CloseAudio();
 	SDL_Quit();
 }
