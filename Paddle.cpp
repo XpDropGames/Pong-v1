@@ -38,6 +38,27 @@ void Paddle::SetDir(int d) {
 	dir = d;
 }
 
+void Paddle::IncScore() {
+	score++;
+}
+
+void Paddle::ShowScore(SDL_Renderer* renderer, TTF_Font* font, SDL_Color color) {
+	scoreSurface = TTF_RenderText_Solid(font, to_string(score).c_str(), color);
+
+	if (id == 0) {
+		scoreRect.x = SCREEN_WIDTH / 2 - 100;
+	}
+	else if (id == 1) {
+		scoreRect.x = SCREEN_WIDTH / 2 + 100;
+	}
+	scoreRect.y = 50;
+	scoreRect.w = scoreSurface->w;
+	scoreRect.h = scoreSurface->h;
+	scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
+
+	SDL_RenderCopy(renderer, scoreTexture, NULL, &scoreRect);
+}
+
 int Paddle::GetId() {
 	return id;
 }

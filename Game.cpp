@@ -16,6 +16,10 @@ bool Game::Init() {
 		return false;
 	}
 
+	if (TTF_Init() != 0) {
+		return false;
+	}
+
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 
 	// Initialization of paddles
@@ -24,6 +28,8 @@ bool Game::Init() {
 
 	// Initialize ball
 	ball = new Ball;
+
+	font = TTF_OpenFont("Assets/font.ttf", 32);
 
 	return true;
 }
@@ -90,6 +96,9 @@ void Game::Draw() {
 	SDL_SetRenderDrawColor(renderer, 40, 40, 255, 255);
 	SDL_RenderFillRect(renderer, ball->GetRect());
 
+	leftPaddle->ShowScore(renderer, font, fontColor);
+	rightPaddle->ShowScore(renderer, font, fontColor);
+
 	SDL_RenderPresent(renderer);
 }
 
@@ -98,5 +107,6 @@ void Game::Shutdown() {
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	Mix_CloseAudio();
+	TTF_Quit();
 	SDL_Quit();
 }

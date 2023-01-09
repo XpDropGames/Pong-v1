@@ -21,7 +21,11 @@ void Ball::Update(Paddle* lPaddle, Paddle* rPaddle) {
 	pos.x = pos.x + vel.x * speed;
 	pos.y = pos.y + vel.y * speed;
 
-	if (pos.x < 0 || pos.x > SCREEN_WIDTH - size) {
+	if (pos.x < 0) {
+		rPaddle->IncScore();
+		Reset();
+	} else if (pos.x > SCREEN_WIDTH - size) {
+		lPaddle->IncScore();
 		Reset();
 	}
 
